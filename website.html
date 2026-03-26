@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TokenTrend — AI Crypto Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ─── RESET & VARIABLES ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050a0f;
+    --surface: #0b1420;
+    --surface2: #0f1d2e;
+    --border: rgba(0,200,255,0.12);
+    --accent: #00c8ff;
+    --accent2: #7b2fff;
+    --up: #00e896;
+    --down: #ff3d6e;
+    --text: #e2eaf5;
+    --muted: #5a7899;
+    --gold: #f5c842;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── ANIMATED BG ────────────────────────────────────────── */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .bg-glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse 70% 50% at 20% 10%, rgba(123,47,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0,200,255,0.07) 0%, transparent 60%);
+  }
+
+  /* ─── LAYOUT ─────────────────────────────────────────────── */
+  .shell { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ─── HEADER ─────────────────────────────────────────────── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 22px; letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent); }
+
+  .header-meta {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .live-badge {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--up); letter-spacing: 1.5px;
+    background: rgba(0,232,150,0.08);
+    border: 1px solid rgba(0,232,150,0.2);
+    padding: 5px 12px; border-radius: 20px;
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--up);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ opacity:1; transform: scale(1); }
+    50%{ opacity:0.4; transform: scale(0.7); }
+  }
+
+  .last-updated {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ─── STATS BAR ──────────────────────────────────────────── */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .stat-card:hover { border-color: rgba(0,200,255,0.3); }
+  .stat-card::before {
+    content:''; position: absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    opacity: 0.6;
+  }
+  .stat-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-val { font-size: 22px; font-weight: 800; }
+  .stat-sub { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ─── SECTION HEADER ─────────────────────────────────────── */
+  .section-hdr {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-hdr h2 {
+    font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── FILTER BAR ─────────────────────────────────────────── */
+  .filter-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .filter-label {
+    font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 1px;
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); font-family: var(--font-mono);
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: rgba(0,200,255,0.1); border-color: var(--accent); color: var(--accent);
+  }
+  .search-wrap { margin-left: auto; position: relative; }
+  .search-wrap input {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-mono); font-size: 12px;
+    padding: 7px 14px 7px 34px; border-radius: 20px; width: 200px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap::before {
+    content: '⌕'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 15px;
+  }
+
+  /* ─── TOKEN GRID ─────────────────────────────────────────── */
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+  }
+
+  .token-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 22px 24px;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.5s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .token-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0,200,255,0.25);
+    box-shadow: 0 8px 40px rgba(0,200,255,0.06);
+  }
+  .token-card.up-card { border-left: 3px solid var(--up); }
+  .token-card.down-card { border-left: 3px solid var(--down); }
+
+  .token-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .token-id {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .token-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--surface2); display: flex; align-items: center; justify-content: center;
+    font-size: 20px; border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .token-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .token-name { font-weight: 700; font-size: 16px; }
+  .token-symbol { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .prediction-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .prediction-badge.up {
+    background: rgba(0,232,150,0.12); color: var(--up); border: 1px solid rgba(0,232,150,0.25);
+  }
+  .prediction-badge.down {
+    background: rgba(255,61,110,0.12); color: var(--down); border: 1px solid rgba(255,61,110,0.25);
+  }
+  .prediction-badge.loading {
+    background: rgba(90,120,153,0.12); color: var(--muted); border: 1px solid var(--border);
+  }
+
+  /* Price row */
+  .token-price-row {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .token-price { font-size: 26px; font-weight: 800; font-family: var(--font-mono); }
+  .token-change {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+    padding: 2px 8px; border-radius: 6px;
+  }
+  .token-change.pos { color: var(--up); background: rgba(0,232,150,0.08); }
+  .token-change.neg { color: var(--down); background: rgba(255,61,110,0.08); }
+
+  /* Confidence bar */
+  .conf-row { margin-bottom: 14px; }
+  .conf-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+    margin-bottom: 6px; letter-spacing: 0.5px;
+  }
+  .conf-track {
+    height: 5px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden;
+  }
+  .conf-fill {
+    height: 100%; border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .conf-fill.up { background: linear-gradient(90deg, #00b876, var(--up)); }
+  .conf-fill.down { background: linear-gradient(90deg, #c4003a, var(--down)); }
+
+  /* Feature mini-chart */
+  .feature-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .feature-cell { text-align: center; }
+  .feature-val {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    color: var(--text);
+  }
+  .feature-key {
+    font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+    letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px;
+  }
+
+  /* Volume sparkline area */
+  .sparkline-wrap { margin: 10px 0 14px; }
+  canvas.sparkline { width: 100%; height: 50px; display: block; }
+
+  /* ─── STABLECOINS NOTE ───────────────────────────────────── */
+  .stablecoin-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10px; color: var(--gold);
+    background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2);
+    padding: 3px 10px; border-radius: 20px; margin-top: 4px;
+  }
+
+  /* ─── LOADING SKELETON ───────────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer {
+    0%{ background-position: 200% 0; }
+    100%{ background-position: -200% 0; }
+  }
+
+  /* ─── MODAL ──────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid rgba(0,200,255,0.2);
+    border-radius: 22px; padding: 32px; width: 90%; max-width: 520px;
+    position: relative; animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); width: 30px; height: 30px; border-radius: 50%;
+    font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+  .model-feature-list { display: flex; flex-direction: column; gap: 12px; }
+  .mf-row { display: flex; align-items: center; justify-content: space-between; }
+  .mf-name { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .mf-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 99px; margin: 0 14px; }
+  .mf-bar { height: 100%; border-radius: 99px; }
+  .mf-val { font-family: var(--font-mono); font-size: 12px; min-width: 70px; text-align: right; }
+  .modal-explain {
+    margin-top: 20px; padding: 14px; background: var(--surface2);
+    border-radius: 12px; border: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 11px; color: var(--muted); line-height: 1.7;
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border); margin-top: 60px; padding-top: 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer span { letter-spacing: 0.5px; }
+  .footer-right { display: flex; gap: 20px; }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .token-grid { grid-template-columns: 1fr; }
+    .header-meta { gap: 10px; }
+    .last-updated { display: none; }
+  }
+  @media (max-width: 480px) {
+    .stats-bar { grid-template-columns: 1fr; }
+  }
+
+  /* ─── ERROR STATE ────────────────────────────────────────── */
+  .error-note {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--gold); background: rgba(245,200,66,0.07);
+    border: 1px solid rgba(245,200,66,0.15); padding: 10px 16px;
+    border-radius: 10px; margin-bottom: 20px; display: none;
+  }
+  .error-note.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📈</div>
+      <div>
+        <div class="logo-text">Token<span>Trend</span></div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px;">AI CRYPTO PREDICTOR · JETs IntraSoc Hackathon</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="last-updated" id="lastUpdated">—</div>
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">Tokens Tracked</div>
+      <div class="stat-val" id="statTotal">—</div>
+      <div class="stat-sub">With ML predictions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bullish Signals</div>
+      <div class="stat-val" style="color:var(--up)" id="statUp">—</div>
+      <div class="stat-sub">Predicted UP today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bearish Signals</div>
+      <div class="stat-val" style="color:var(--down)" id="statDown">—</div>
+      <div class="stat-sub">Predicted DOWN today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Market Sentiment</div>
+      <div class="stat-val" id="statSentiment">—</div>
+      <div class="stat-sub">Based on ML ensemble</div>
+    </div>
+  </div>
+
+  <!-- ERROR NOTE -->
+  <div class="error-note" id="errorNote"></div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">FILTER:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('up',this)">🟢 Bullish</button>
+    <button class="filter-btn" onclick="setFilter('down',this)">🔴 Bearish</button>
+    <button class="filter-btn" onclick="setFilter('stable',this)">🔵 Stablecoin</button>
+    <div class="search-wrap">
+      <input type="text" placeholder="Search token..." id="searchInput" oninput="renderCards()" />
+    </div>
+  </div>
+
+  <!-- SECTION HEADER -->
+  <div class="section-hdr">
+    <h2>Live Predictions</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- TOKEN GRID -->
+  <div class="token-grid" id="tokenGrid">
+    <!-- Skeleton cards rendered by JS -->
+  </div>
+
+  <footer>
+    <span>TokenTrend &copy; 2026 · JETs IntraSoc Hackathon Submission</span>
+    <div class="footer-right">
+      <span>Data: CoinGecko API</span>
+      <span>ML: Logistic Regression (Client-side)</span>
+      <span>Features: Daily Return · MA7 · MA14 · MA30 · Vol7 · Vol14</span>
+    </div>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+    <div class="modal-title" id="modalTitle">Token Details</div>
+    <div class="model-feature-list" id="modalContent"></div>
+    <div class="modal-explain" id="modalExplain"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  MODEL WEIGHTS  (from all_crypto_logistic_regression_models_params.json)
+// ═══════════════════════════════════════════════════════════════
+const MODEL_PARAMS = {
+  "Ethereum": { intercept: 0.11821713406467418, coef: { daily_return: -0.023345760801490832, ma_7: 0.0006835618272561245, ma_14: -0.0012247129772022369, ma_30: 0.0005904342632248122, volatility_7: 0.043928266704218115, volatility_14: -0.056576770767509124 } },
+  "Dogecoin": { intercept: -0.17877825570997524, coef: { daily_return: -0.005471585309523427, ma_7: -0.2900564873504997, ma_14: -0.29330631195608553, ma_30: -0.44397402731015345, volatility_7: 0.005608733423574644, volatility_14: 0.008562708774321139 } },
+  "Aave": { intercept: 0.3423725059381681, coef: { daily_return: -0.01071084916180096, ma_7: 0.0009541531820390321, ma_14: -0.006098011174172192, ma_30: 0.004187522744840473, volatility_7: 0.14345728721054904, volatility_14: -0.11925456711987896 } },
+  "Crypto.com Coin": { intercept: 0.1324940231334505, coef: { daily_return: 0.0013625549410828425, ma_7: 0.3554957198154579, ma_14: 0.3111403551175628, ma_30: 0.0402131607574369, volatility_7: 0.040829494467946516, volatility_14: -0.06276245035750008 } },
+  "Chainlink": { intercept: 0.16071753929158245, coef: { daily_return: -0.014180954297558678, ma_7: -0.1401435441755419, ma_14: 0.12213701016924818, ma_30: 0.020732251136039048, volatility_7: -0.028652446850696137, volatility_14: 0.0064899677328896415 } },
+  "EOS": { intercept: 0.02558291019568272, coef: { daily_return: -0.029758530605633736, ma_7: -0.007892901616594351, ma_14: -0.02634264908467509, ma_30: 0.0020844719972837244, volatility_7: 0.014744884882355043, volatility_14: 0.005320040141782162 } },
+  "Bitcoin": { intercept: 0.18427135840031564, coef: { daily_return: -0.02222144303914681, ma_7: 3.710950618968926e-05, ma_14: -4.8526830206089736e-05, ma_30: 6.457113233538525e-06, volatility_7: 0.00869008175545756, volatility_14: -0.004765078257279426 } },
+  "Cosmos": { intercept: 0.09525895887080892, coef: { daily_return: -0.022893409710978006, ma_7: -0.11438010619641238, ma_14: 0.0010952449556526666, ma_30: 0.10007045390843469, volatility_7: 0.021245600059383134, volatility_14: -0.015673853098537402 } },
+  "BNB": { intercept: 0.08457318925463078, coef: { daily_return: -0.01951235542746042, ma_7: 0.006813997748876823, ma_14: -0.00879345879250466, ma_30: 0.001426035509603988, volatility_7: 0.007071385332484782, volatility_14: -0.0005361291446708421 } },
+  "Cardano": { intercept: -0.046910242646790695, coef: { daily_return: -0.018204463478024853, ma_7: -0.4737595786070824, ma_14: 0.07086779718226935, ma_30: 0.22086250690647766, volatility_7: -0.017840331993528233, volatility_14: 0.04103384344403438 } },
+  "Litecoin": { intercept: -0.10145361732055051, coef: { daily_return: -0.02415396525467243, ma_7: 0.00822541618160005, ma_14: -0.010959990319762698, ma_30: 0.0021961071012436637, volatility_7: 0.021759626495131523, volatility_14: -0.002254834429778901 } },
+  "TRON": { intercept: 0.0950095177502193, coef: { daily_return: -0.008675500720301023, ma_7: -1.1764888851637374, ma_14: -1.0749574184046826, ma_30: -0.9530391754603351, volatility_7: 0.02328399968451322, volatility_14: -0.017149801071149627 } },
+  "Monero": { intercept: 0.07649727228920838, coef: { daily_return: -0.02043061900145744, ma_7: -0.002157142338271311, ma_14: 0.0069513193640615995, ma_30: -0.004405888765574224, volatility_7: -0.00139982101437681, volatility_14: -0.011344930982654208 } },
+  "Tether": { intercept: -0.08228763206180985, coef: { daily_return: -0.8092363126317574, ma_7: -0.39711706354145726, ma_14: -0.30301230041776617, ma_30: -0.09047660503155669, volatility_7: 0.08232177943093612, volatility_14: 0.9184058288319573 } },
+  "Stellar": { intercept: -0.1376078486931923, coef: { daily_return: -0.01330873889143228, ma_7: -0.18619732119756727, ma_14: -0.07205465543436765, ma_30: 0.23297997220798017, volatility_7: -0.010991856500949275, volatility_14: 0.018244404044044878 } },
+  "NEM": { intercept: 0.00315428825004618, coef: { daily_return: -0.020022472929925247, ma_7: -0.28406640148770423, ma_14: 0.07292044364862886, ma_30: -0.27026162073217175, volatility_7: -0.014277942046270848, volatility_14: 0.0252756916117042 } },
+  "Polkadot": { intercept: 0.23159964508569855, coef: { daily_return: -0.024433092076328683, ma_7: 0.020508856430539187, ma_14: -0.09250469830576542, ma_30: 0.07191749117993658, volatility_7: 0.11385217293358985, volatility_14: -0.1448398884214852 } },
+  "IOTA": { intercept: -0.1596224158148799, coef: { daily_return: -0.04008919512093563, ma_7: -0.10941164465705078, ma_14: -0.0007175666645443113, ma_30: -0.04585472312976381, volatility_7: 0.06733556805180436, volatility_14: -0.021438256394374477 } },
+  "Uniswap": { intercept: -0.3078032593225046, coef: { daily_return: -0.04636150921402588, ma_7: -0.18750875053752375, ma_14: 0.24895389981068017, ma_30: -0.073161073204031, volatility_7: -0.008741450612430625, volatility_14: 0.08710859208326904 } },
+  "Solana": { intercept: 0.3402295036512879, coef: { daily_return: -0.014839487207213788, ma_7: 0.031122013563268585, ma_14: -0.09043429233552644, ma_30: 0.05545957419696936, volatility_7: 0.010421842774401365, volatility_14: -0.021949099339135244 } },
+  "Wrapped Bitcoin": { intercept: 0.023388653903405585, coef: { daily_return: -0.04232661511042843, ma_7: -1.5307143760515513e-05, ma_14: 2.981421017949276e-05, ma_30: -1.9166687605915903e-05, volatility_7: -0.002756225838288561, volatility_14: 0.06143533388914087 } },
+  "XRP": { intercept: -0.18753744849383108, coef: { daily_return: -0.010970459959500151, ma_7: -0.015820314440644342, ma_14: -0.04763343210067278, ma_30: -0.09911017386042054, volatility_7: 0.0012084972364773102, volatility_14: 0.01934020113154773 } },
+  "USD Coin": { intercept: 0.06535310607658623, coef: { daily_return: -1.111139448456511, ma_7: 0.0037373480609729885, ma_14: 0.033993723444264774, ma_30: 0.05883157614374252, volatility_7: -0.8944556496932108, volatility_14: 0.46042483102508147 } },
+};
+
+// CoinGecko ID mapping
+const COIN_IDS = {
+  "Bitcoin": "bitcoin", "Ethereum": "ethereum", "Tether": "tether",
+  "BNB": "binancecoin", "XRP": "ripple", "USD Coin": "usd-coin",
+  "Solana": "solana", "Cardano": "cardano", "Dogecoin": "dogecoin",
+  "Polkadot": "polkadot", "TRON": "tron", "Litecoin": "litecoin",
+  "Chainlink": "chainlink", "Uniswap": "uniswap", "Stellar": "stellar",
+  "Monero": "monero", "Cosmos": "cosmos", "Aave": "aave",
+  "Wrapped Bitcoin": "wrapped-bitcoin", "EOS": "eos",
+  "Crypto.com Coin": "crypto-com-chain", "NEM": "nem",
+  "IOTA": "iota",
+};
+
+const STABLECOINS = new Set(["Tether", "USD Coin"]);
+
+const COIN_EMOJIS = {
+  "Bitcoin": "₿", "Ethereum": "Ξ", "Tether": "₮", "BNB": "🔶",
+  "XRP": "✕", "USD Coin": "ᙂ", "Solana": "◎", "Cardano": "₳",
+  "Dogecoin": "Ð", "Polkadot": "⬤", "TRON": "⟐", "Litecoin": "Ł",
+  "Chainlink": "⬡", "Uniswap": "🦄", "Stellar": "✦", "Monero": "ɱ",
+  "Cosmos": "⚛", "Aave": "👻", "Wrapped Bitcoin": "₿", "EOS": "E",
+  "Crypto.com Coin": "🐾", "NEM": "ℕ", "IOTA": "ι",
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  ML INFERENCE  — Logistic Regression (sigmoid)
+// ═══════════════════════════════════════════════════════════════
+function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+function predict(name, features) {
+  const p = MODEL_PARAMS[name];
+  if (!p) return null;
+  let z = p.intercept;
+  for (const [k, v] of Object.entries(p.coef)) {
+    z += v * (features[k] ?? 0);
+  }
+  const prob = sigmoid(z);
+  return { prob, direction: prob >= 0.5 ? 'UP' : 'DOWN' };
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FEATURE ENGINEERING  — from live 7-day OHLC
+// ═══════════════════════════════════════════════════════════════
+function computeFeatures(prices) {
+  // prices = array of close prices (oldest → newest), ideally 30+
+  if (!prices || prices.length < 2) return null;
+  const n = prices.length;
+  const last = prices[n - 1];
+  const prev = prices[n - 2];
+
+  const daily_return = (last - prev) / (prev || 1);
+
+  const ma = (arr, days) => {
+    const slice = arr.slice(Math.max(0, arr.length - days));
+    return slice.reduce((a, b) => a + b, 0) / slice.length;
+  };
+  const volatility = (arr, days) => {
+    const slice = arr.slice(Math.max(0, arr.length - days));
+    const mean = slice.reduce((a, b) => a + b, 0) / slice.length;
+    const variance = slice.reduce((a, b) => a + (b - mean) ** 2, 0) / slice.length;
+    return Math.sqrt(variance);
+  };
+
+  return {
+    daily_return,
+    ma_7: ma(prices, 7),
+    ma_14: ma(prices, 14),
+    ma_30: ma(prices, 30),
+    volatility_7: volatility(prices, 7),
+    volatility_14: volatility(prices, 14),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+let allCards = [];  // { name, coinId, price, change24h, features, prediction, imgUrl, sparkData }
+let currentFilter = 'all';
+let marketCapMap = {};
+
+// ═══════════════════════════════════════════════════════════════
+//  COINGECKO API
+// ═══════════════════════════════════════════════════════════════
+const CG_KEY = 'CG-oaWHdmm2ETQXbS23p9rqHvkg';
+const CG_BASE = 'https://api.coingecko.com/api/v3';
+
+async function cgFetch(path) {
+  const sep = path.includes('?') ? '&' : '?';
+  const url = `${CG_BASE}${path}${sep}x_cg_demo_api_key=${CG_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`CoinGecko ${r.status}: ${r.statusText}`);
+  return r.json();
+}
+
+async function fetchMarketData() {
+  const ids = Object.values(COIN_IDS).join(',');
+  const data = await cgFetch(`/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h`);
+  return data;
+}
+
+async function fetchHistoricalPrices(coinId) {
+  // 35 days for MA30 + buffer
+  const data = await cgFetch(`/coins/${coinId}/market_chart?vs_currency=usd&days=35&interval=daily`);
+  return data.prices.map(p => p[1]); // array of close prices
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SKELETON LOADING
+// ═══════════════════════════════════════════════════════════════
+function renderSkeletons(n = 6) {
+  const grid = document.getElementById('tokenGrid');
+  grid.innerHTML = Array.from({length: n}, () => `
+    <div class="token-card" style="pointer-events:none">
+      <div class="token-top">
+        <div class="token-id">
+          <div class="token-icon skeleton" style="border:none"></div>
+          <div>
+            <div class="skeleton" style="width:90px;height:14px;margin-bottom:8px"></div>
+            <div class="skeleton" style="width:50px;height:10px"></div>
+          </div>
+        </div>
+        <div class="skeleton" style="width:72px;height:28px;border-radius:20px"></div>
+      </div>
+      <div class="skeleton" style="width:130px;height:28px;margin-bottom:14px"></div>
+      <div class="skeleton" style="height:5px;margin-bottom:16px"></div>
+      <div class="feature-row">
+        ${[1,2,3].map(()=>`<div class="skeleton" style="height:32px;border-radius:8px"></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DRAW SPARKLINE  (canvas)
+// ═══════════════════════════════════════════════════════════════
+function drawSparkline(canvas, data, color) {
+  if (!canvas || !data || data.length < 2) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth * dpr;
+  const h = canvas.offsetHeight * dpr;
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const xStep = w / (data.length - 1);
+  ctx.clearRect(0, 0, w, h);
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = i * xStep;
+    const y = h - ((v - min) / range) * (h * 0.8) - h * 0.1;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2 * dpr;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  // fill
+  ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+  ctx.fillStyle = color.replace(')', ',0.08)').replace('rgb', 'rgba');
+  ctx.fill();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER CARDS
+// ═══════════════════════════════════════════════════════════════
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('tokenGrid');
+  const search = document.getElementById('searchInput').value.toLowerCase();
+
+  let filtered = allCards.filter(c => {
+    if (search && !c.name.toLowerCase().includes(search)) return false;
+    if (currentFilter === 'up' && c.prediction?.direction !== 'UP') return false;
+    if (currentFilter === 'down' && c.prediction?.direction !== 'DOWN') return false;
+    if (currentFilter === 'stable' && !STABLECOINS.has(c.name)) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:var(--font-mono);color:var(--muted);">No tokens match your filter.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((c, idx) => buildCard(c, idx)).join('');
+
+  // Draw sparklines & animate confidence bars
+  filtered.forEach((c, idx) => {
+    const el = grid.children[idx];
+    if (!el) return;
+    const canvas = el.querySelector('.sparkline');
+    if (canvas && c.sparkData) {
+      setTimeout(() => drawSparkline(canvas, c.sparkData,
+        c.prediction?.direction === 'UP' ? '#00e896' : '#ff3d6e'), 50);
+    }
+    const fill = el.querySelector('.conf-fill');
+    if (fill && c.prediction) {
+      setTimeout(() => fill.style.width = (c.prediction.prob * 100).toFixed(1) + '%', 100);
+    }
+    el.style.animationDelay = (idx * 0.05) + 's';
+  });
+
+  updateStats();
+}
+
+function buildCard(c, idx) {
+  const p = c.prediction;
+  const isStable = STABLECOINS.has(c.name);
+  const dir = p ? p.direction : null;
+  const pct = p ? (p.prob * 100).toFixed(1) : null;
+  const changeStr = c.change24h != null ? (c.change24h >= 0 ? '+' : '') + c.change24h.toFixed(2) + '%' : '—';
+  const changeClass = c.change24h > 0 ? 'pos' : 'neg';
+  const priceStr = c.price != null ? '$' + formatPrice(c.price) : '—';
+
+  const f = c.features || {};
+  const dr = f.daily_return != null ? (f.daily_return * 100).toFixed(2) + '%' : '—';
+  const vol7 = f.volatility_7 != null ? '$' + formatPrice(f.volatility_7) : '—';
+  const ma7 = f.ma_7 != null ? '$' + formatPrice(f.ma_7) : '—';
+
+  return `
+  <div class="token-card ${dir === 'UP' ? 'up-card' : dir === 'DOWN' ? 'down-card' : ''}"
+       onclick="openModal('${c.name}')" style="animation-delay:${idx*0.04}s">
+    <div class="token-top">
+      <div class="token-id">
+        <div class="token-icon" id="icon-${c.name.replace(/\s/g,'_')}">
+          ${c.imgUrl
+            ? `<img src="${c.imgUrl}" alt="${c.name}" onerror="this.parentElement.textContent='${COIN_EMOJIS[c.name]||'?'}'">`
+            : (COIN_EMOJIS[c.name] || '?')}
+        </div>
+        <div>
+          <div class="token-name">${c.name}</div>
+          <div class="token-symbol">${c.coinId ? c.coinId.toUpperCase() : ''}</div>
+          ${isStable ? `<div class="stablecoin-tag">⚓ STABLECOIN</div>` : ''}
+        </div>
+      </div>
+      ${p ? `
+        <div class="prediction-badge ${dir === 'UP' ? 'up' : 'down'}">
+          ${dir === 'UP' ? '▲' : '▼'} ${dir}
+        </div>` : `<div class="prediction-badge loading">⟳ LOADING</div>`}
+    </div>
+
+    <div class="token-price-row">
+      <span class="token-price">${priceStr}</span>
+      <span class="token-change ${changeClass}">${changeStr}</span>
+    </div>
+
+    <div class="sparkline-wrap">
+      <canvas class="sparkline" style="width:100%;height:50px"></canvas>
+    </div>
+
+    <div class="conf-row">
+      <div class="conf-label">
+        <span>AI CONFIDENCE</span>
+        <span>${pct ? pct + '%' : '—'}</span>
+      </div>
+      <div class="conf-track">
+        <div class="conf-fill ${dir ? dir.toLowerCase() : ''}" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-cell">
+        <div class="feature-val">${dr}</div>
+        <div class="feature-key">Daily Ret</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-val">${ma7}</div>
+        <div class="feature-key">MA7</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-val">${vol7}</div>
+        <div class="feature-key">Vol 7D</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function updateStats() {
+  const loaded = allCards.filter(c => c.prediction);
+  const up = loaded.filter(c => c.prediction.direction === 'UP').length;
+  const down = loaded.filter(c => c.prediction.direction === 'DOWN').length;
+  document.getElementById('statTotal').textContent = loaded.length;
+  document.getElementById('statUp').textContent = up;
+  document.getElementById('statDown').textContent = down;
+  const bull = up / (up + down) * 100;
+  const sentEl = document.getElementById('statSentiment');
+  if (!isNaN(bull)) {
+    sentEl.textContent = bull >= 60 ? '🟢 Bullish' : bull <= 40 ? '🔴 Bearish' : '🟡 Neutral';
+    sentEl.style.color = bull >= 60 ? 'var(--up)' : bull <= 40 ? 'var(--down)' : 'var(--gold)';
+  }
+  document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════════════
+function openModal(name) {
+  const c = allCards.find(x => x.name === name);
+  if (!c || !c.prediction || !c.features) return;
+  const p = MODEL_PARAMS[name];
+  const f = c.features;
+  const pred = c.prediction;
+  const overlay = document.getElementById('modalOverlay');
+  document.getElementById('modalTitle').textContent = `${name} · AI Breakdown`;
+
+  // Feature weights contribution
+  const contribs = Object.entries(p.coef).map(([k, w]) => ({
+    key: k, weight: w, value: f[k] ?? 0, contrib: w * (f[k] ?? 0)
+  })).sort((a, b) => Math.abs(b.contrib) - Math.abs(a.contrib));
+
+  const maxAbs = Math.max(...contribs.map(x => Math.abs(x.contrib)), 0.001);
+
+  document.getElementById('modalContent').innerHTML = contribs.map(x => {
+    const pct = (Math.abs(x.contrib) / maxAbs * 100).toFixed(0);
+    const color = x.contrib > 0 ? 'var(--up)' : 'var(--down)';
+    const sign = x.contrib > 0 ? '+' : '';
+    return `
+      <div class="mf-row">
+        <div class="mf-name">${x.key.replace(/_/g,' ')}</div>
+        <div class="mf-bar-wrap"><div class="mf-bar" style="width:${pct}%;background:${color}"></div></div>
+        <div class="mf-val" style="color:${color}">${sign}${x.contrib.toFixed(4)}</div>
+      </div>`;
+  }).join('');
+
+  const confPct = (pred.prob * 100).toFixed(1);
+  document.getElementById('modalExplain').innerHTML = `
+    <strong style="color:var(--text)">Why ${pred.direction}?</strong><br>
+    The logistic regression model computes a weighted sum of 6 engineered features.
+    The raw score (logit) = <strong>${(Math.log(pred.prob/(1-pred.prob))).toFixed(4)}</strong>,
+    which maps to a sigmoid probability of <strong>${confPct}%</strong>.
+    The top driver for this prediction is <strong>${contribs[0].key.replace(/_/g,' ')}</strong>
+    contributing <strong>${contribs[0].contrib > 0 ? '+' : ''}${contribs[0].contrib.toFixed(4)}</strong> to the logit.
+    ${STABLECOINS.has(name) ? '<br><br>⚠️ This is a stablecoin — directional predictions carry less meaning.' : ''}
+  `;
+
+  overlay.classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'modalOverlay') document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+function formatPrice(n) {
+  if (n >= 1000) return n.toLocaleString('en-US', {maximumFractionDigits: 2});
+  if (n >= 1) return n.toFixed(4);
+  if (n >= 0.01) return n.toFixed(5);
+  return n.toFixed(8);
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorNote');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN LOAD
+// ═══════════════════════════════════════════════════════════════
+async function loadAll() {
+  renderSkeletons(Object.keys(MODEL_PARAMS).length);
+
+  // Step 1: fetch market data (prices + 24h change)
+  let marketData = [];
+  try {
+    marketData = await fetchMarketData();
+  } catch (e) {
+    showError(`CoinGecko market data unavailable (${e.message}). Using cached feature data.`);
+  }
+
+  const marketMap = {};
+  for (const m of marketData) { marketMap[m.id] = m; }
+
+  // Step 2: initialise card stubs
+  allCards = Object.keys(MODEL_PARAMS).map(name => {
+    const coinId = COIN_IDS[name] || '';
+    const m = marketMap[coinId];
+    return {
+      name, coinId,
+      price: m?.current_price ?? null,
+      change24h: m?.price_change_percentage_24h ?? null,
+      imgUrl: m?.image ?? null,
+      features: null, prediction: null, sparkData: null
+    };
+  });
+
+  // Sort by market cap order
+  allCards.sort((a, b) => {
+    const ai = marketData.findIndex(m => m.id === COIN_IDS[a.name]);
+    const bi = marketData.findIndex(m => m.id === COIN_IDS[b.name]);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+  renderCards();
+
+  // Step 3: fetch historical prices for each coin + run inference
+  // Stagger requests to avoid rate limiting
+  const CHUNK = 3;
+  for (let i = 0; i < allCards.length; i += CHUNK) {
+    const chunk = allCards.slice(i, i + CHUNK);
+    await Promise.all(chunk.map(async c => {
+      try {
+        const prices = await fetchHistoricalPrices(c.coinId);
+        c.sparkData = prices.slice(-14); // 14-day sparkline
+        c.features = computeFeatures(prices);
+        if (c.features) {
+          c.prediction = predict(c.name, c.features);
+        }
+      } catch (e) {
+        console.warn(`Could not load history for ${c.name}:`, e.message);
+        // Fallback: estimate features from 24h change only
+        if (c.change24h != null) {
+          const dr = c.change24h / 100;
+          const px = c.price || 1;
+          c.features = { daily_return: dr, ma_7: px, ma_14: px, ma_30: px, volatility_7: Math.abs(dr)*px, volatility_14: Math.abs(dr)*px };
+          c.prediction = predict(c.name, c.features);
+        }
+      }
+    }));
+    renderCards(); // re-render after each chunk
+    if (i + CHUNK < allCards.length) await new Promise(r => setTimeout(r, 800));
+  }
+
+  renderCards();
+}
+
+// ─── Boot ────────────────────────────────────────────────────
+loadAll();
+
+// Auto-refresh every 5 minutes
+setInterval(loadAll, 5 * 60 * 1000);
+</script>
+</body>
+</html>
