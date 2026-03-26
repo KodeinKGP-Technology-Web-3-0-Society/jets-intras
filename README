@@ -1,0 +1,1 @@
+In this project, we have tried to make different ml models for different currencies to predict if the value of that currency will go up or down. We have implemented a simple logistic regression model . The decreased accuracy is due to availability of less amount of data and avoiding the use of complex methods for the model. 
