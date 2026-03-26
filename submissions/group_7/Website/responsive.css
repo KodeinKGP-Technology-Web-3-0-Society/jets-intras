@@ -1,0 +1,120 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+header {
+    display: flex;
+    justify-content:space-between;
+    margin: 0;
+    padding: 20px 16px;
+}
+#logo, #searchForm, #random, #themeToggle {
+    display: flex;
+}
+.head #logo,
+.head #searchForm,
+.head #random,
+.head #themeToggle,
+.head #searchToggle {
+    display: none;
+}
+
+.head #searchForm {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 640px) {
+    #searchForm {
+        display: none;
+    }
+}
+
+/* Top 4 tokens  */
+.topTokens {
+    display: flex;
+    justify-content: space-around;
+    overflow-x: auto;
+    gap: 12px;
+    @media (max-width: 620px) {
+        gap: 20px;
+    }
+}
+
+/* The chart and confidence meter */
+.chartSection {
+    height: calc(100vh - 340px);
+    .confidenceMeter {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+}
+@media (max-width: 850px) {
+    .chartSection {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0px 40px;
+        height: auto;
+        max-height: none;
+    }
+    .chartSection .chartContainer{
+        min-height: 200px;
+        max-width: 100%;
+        min-width: 100%;
+    }
+    .chartSection .confidenceMeter {
+        display: flex;
+        min-width: 104%;
+        padding: 16px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: auto;
+        min-height: 200px;
+        max-height: none;
+        position: relative;
+    }
+    .chartSection .confidenceMeter .meter {
+        width: 10%;
+        height: 92%;
+        position: absolute;
+        right: 16px;
+    }
+}
+@media (max-height: 1200px) {
+    .chartSection .chartContainer, 
+    .chartSection .confidenceMeter {
+        height: auto;
+        min-height: 360px !important;
+    }
+}
+
+/* Features section */
+.contribution {
+    display: flex;
+    padding: 8px 24px;
+    padding-bottom: 20px;
+    overflow-x: auto;
+    gap: 12px;
+}
+@media (max-width: 640px) {
+    .contribution {
+        align-items: center;
+        justify-content: space-around;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+}
+@media (max-width: 640px) {
+    .contribution .cards {
+        min-width: 20%;
+        flex-wrap: wrap;
+        width: 33%;
+        max-width: 40% !important;
+    }
+}

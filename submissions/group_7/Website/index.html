@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tokenTrend</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="icon" href="assets/icon.svg">
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- The header -->
+    <header>
+        <div id="logo", class="head">
+            <img src="assets/icon.svg" alt="Token Trend Logo">
+            <p>Token Trend</p>
+        </div>
+        <form id="searchForm", class="head">
+            <input type="text" placeholder="Search">
+            <div class="searchResults">
+            </div>
+            <button type="submit"><img src="assets/search.svg" alt="Search Icon"></button>
+        </form>
+        <div class="buttons">
+        <!-- Search toggle for mobile view -->
+            <button id="searchToggle" type="button">
+                <img src="assets/search.svg" alt="Theme Toggle Icon">
+            </button>
+            <button id = "random", class="head" type="button">
+                <img src="assets/random.svg" alt="Random Icon">
+                <p>Random</p>
+            </button>
+        </div>
+    </header>
+
+    <!-- Top 4 Tokens -->
+    <!-- Instead of just the top 4 based on close, display top in each category -->
+    <div class="topTokens">
+        <!-- The tokens can be appended -->
+        <!-- Will do after processing the API -->
+        <div class="cards" style="--card-accent: var(--c-color-yellow); border: var(--card-accent) 2px solid;">
+            <div class="card-header" style="border: var">
+                <img src="" class="leader">
+                <span class="leader"></span>
+                <p>Market Leader</p>
+            </div>
+            <div class="details_top">
+                <p></p>
+            </div>
+        </div>
+        <div class="cards" style="--card-accent: var(--c-color-green); border: var(--card-accent) 2px solid;">
+            <div class="card-header">
+                <img src="" class="gainer">
+                <span class="gainer"></span>
+                <p>Top gainer</p>
+            </div>
+            <div class="details_top">
+                <p></p>
+            </div>
+        </div>
+        <div class="cards" style="--card-accent: hsl(0, 0%, 90%); border: var(--card-accent) 2px solid;">
+            <div class="card-header">
+                <img src="" class="volumeLeader">
+                <span class="volumeLeader"></span>
+                <p>Volume leader</p>
+            </div>
+            <div class="details_top">
+                <p></p>
+            </div>
+        </div>
+        <div class="cards" style="--card-accent: var(--c-color-orange); border: var(--card-accent) 2px solid;">
+            <div class="card-header">
+                <img src="" class="underValued">
+                <span class="underValued"></span>
+                <p>Under-valued?</p>
+            </div>
+            <div class="details_top">
+                <p></p>
+            </div>
+        </div>
+    </div>
+    <!-- The chart and confidence meter -->
+    <div class="chartSection">
+        <div class="chartContainer glow">
+            <canvas id="priceChart"></canvas>
+            <div class="loadingOverlay chartLoading hidden" aria-live="polite">
+                <div class="loader"></div>
+                <p>Loading chart...</p>
+            </div>
+        </div>
+        <div class="confidenceMeter">
+            <div class="loadingOverlay confidenceLoading hidden" aria-live="polite">
+                <div class="loader"></div>
+                <p>Calculating confidence...</p>
+            </div>
+            <div class="confidenceTxt">
+                <h1>Bitcoin - Tomorrow's prediction</h1>
+                <h2></h2>
+                <p></p>
+                <div class="extraInfo">
+                    <p>last 24h: +2.4%</p>
+                    <p>last 7d: +5.6%</p>
+                    <p>last 30d: +12.3%</p>
+                </div>
+            </div>
+            <div class="meter">
+                <span class="fill"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contribution of each feature -->
+    <h1 id="contTitle">Top features that drove today's prediction</h1>
+<div class="contribution" id="featureContainer">
+    </div>
+
+    <!-- The Token table, every day forecast -->
+    <div class="table">
+        <h1>Market forecast</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Token</th>
+                    <th>Price</th>
+                    <th>24h Change</th>
+                    <th>Market Cap</th>
+                    <th>Volume</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be populated by script -->
+            </tbody>
+        </table>
+    </div>
+    <footer class="dashboard-footer">
+<footer class="dashboard-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <p class="brand">TokenTrend<span>.io</span></p>
+            <p class="tagline">Real-time market inference & 30-day historical analysis.</p>
+        </div>
+        
+        <div class="footer-section">
+            <h4>Project & Team</h4>
+            <ul class="social-links">
+                <li><a href="https://github.com/Spectrallrepos/group-7" target="_blank"><i class="fab"></i> GitHub Repository</a></li>
+                <li class="team-member-link">
+                    <a href="https://github.com/aarushi0618" target="_blank"><i class="fa-solid"></i>Aarushi Ghosh</a>
+                </li>
+                <li class="team-member-link">
+                    <a href="https://github.com/gaurav-murugesan" target="_blank"><i class="fa-solid"></i>Gaurav Murugesan</a>
+                </li>
+                <li class="team-member-link">
+                    <a href="https://github.com/dev-piyush27" target="_blank"><i class="fa-solid"></i>Piyush Kumar</a>
+                </li>
+                <li class="team-member-link">
+                    <a href="https://github.com/Spectrallrepos" target="_blank"><i class="fa-solid"></i>Navadeep Darla</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4>Data Provider</h4>
+            <p>Market data provided by <strong>CoinGecko</strong> and <strong>CryptoCompare</strong></p>
+            <p class="disclaimer">Not financial advice. Values are for demonstration only.</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 TokenTrend Dashboard | Built for Hackathon Excellence
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type = "module" src="script.js"></script>
+</body>
+</html>
