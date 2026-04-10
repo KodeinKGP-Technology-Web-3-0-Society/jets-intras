@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TokenTrend Dashboard</title>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <!-- Main dashboard layout -->
+    <main class="container">
+      <h1>TokenTrend</h1>
+      <!-- Coin controls and refresh status -->
+      <section class="card top-row">
+        <div>
+          <label for="coinSelect">Choose Coin:</label>
+          <select id="coinSelect">
+            <option value="bitcoin">Bitcoin</option>
+            <option value="ethereum">Ethereum</option>
+            <option value="tether">Tether</option>
+            <option value="binancecoin">BNB</option>
+            <option value="solana">Solana</option>
+            <option value="xrp">XRP</option>
+            <option value="cardano">Cardano</option>
+            <option value="dogecoin">Dogecoin</option>
+          </select>
+          <button id="refreshBtn">Refresh</button>
+        </div>
+        <p id="statusText">Loading data...</p>
+      </section>
+
+      <!-- Key metrics -->
+      <section class="kpi-grid">
+        <div class="card">
+          <p class="label">Price</p>
+          <p id="priceText" class="value">--</p>
+        </div>
+        <div class="card">
+          <p class="label">24h Change</p>
+          <p id="changeText" class="value">--</p>
+        </div>
+        <div class="card">
+          <p class="label">24h Volume</p>
+          <p id="volumeText" class="value">--</p>
+        </div>
+      </section>
+
+      <!-- Prediction panel + chart panel -->
+      <section class="two-col">
+        <article class="card">
+          <h2>Prediction for Tomorrow Close</h2>
+          <p id="trendText" class="trend trend-neutral">
+            <span id="trendIcon" class="trend-icon">&#8212;</span>
+            <span id="trendValue" class="trend-value">WAITING</span>
+          </p>
+          <p id="predictedCloseText" class="pred-close">Market will close tommorow at: --</p>
+        </article>
+
+        <article class="card">
+          <div class="chart-head">
+            <h2 id="chartTitle">Price Trend (Last 7 Days)</h2>
+            <div class="range-switch" role="tablist" aria-label="Price range">
+              <button id="range24" class="range-btn" data-days="24h" type="button">24H</button>
+              <button id="range7" class="range-btn active" data-days="7" type="button">7D</button>
+              <button id="range30" class="range-btn" data-days="30" type="button">30D</button>
+            </div>
+          </div>
+          <canvas id="historyChart" width="560" height="320" aria-label="Price chart"></canvas>
+        </article>
+      </section>
+
+      <!-- Watchlist table -->
+      <section class="card">
+        <h2>Top Coins Watchlist</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Coin</th>
+                <th>Price</th>
+                <th>24h Change</th>
+              </tr>
+            </thead>
+            <tbody id="watchlistBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- App logic -->
+    <script src="./index.js"></script>
+  </body>
+</html>
