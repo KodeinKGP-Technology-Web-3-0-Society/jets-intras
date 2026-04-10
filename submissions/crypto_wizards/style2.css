@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* border: 1px solid red; */
+    color: white;
+}
+html{
+    scroll-behavior: smooth;
+}
+body{
+    font-family:"Poppins" , helvetica , sans-serif;
+}
+ul{
+    list-style: none;
+}
+a{
+    color: #999;
+    text-decoration: none;
+    white-space: nowrap;
+}
+h1,h2,h3,h4,h5,h6,p:hover{
+    cursor: default;
+}
+
+
+
+
+:root{
+    --base-color:(255, 255, 255, 0.1);
+    --font-color:white;
+    --ascent-color:rgb(45, 45, 66);
+}
+body{
+    background-image: url(assets/images/8.jpg);
+    background-size: cover;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+html{
+    font-family: "Poppins", "Segoe UI", 'sans-serif';
+    color: var(--font-color);
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.wrapper{
+    background-color: var(--base-color);
+    height: 650px;
+    width: min(80%,400px);
+    padding: 20px;
+    border-radius:20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.116);
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+}
+h1{
+    font-size: 2rem;
+}
+form{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+form > div{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* border: 1px solid white; */
+    border-radius: 20px;
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.519); */
+    background-color: rgba(85, 85, 85, 0.293);
+}
+form > div > label{
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(138, 138, 138, 0.645);
+    border-radius: 20px 0 0 20px;
+}
+form > div > input{
+    flex-grow: 1;
+    border-radius:0 20px 20px 0;
+    height: 100%;
+    background: none;
+    border: 3px solid rgba(255, 255, 255, 0);
+    border-left: none;
+    padding-left: 10px;
+    transition: border 0.5s;
+}
+form>div>input:hover{
+    border: 3px solid rgba(255, 255, 255, 0.645);
+    border-left: none;
+}
+form > div > input:focus {
+    outline: none;
+    /* box-shadow: 0 0 10px white; */
+    border: 3px solid rgba(255, 255, 255, 0.645);
+    border-left: none;
+}
+form > div:focus-within{
+    /* box-shadow: 0 0 20px white; */
+    background-color: rgba(255, 255, 255, 0.438);
+}
+
+button{
+    height: 40px;
+    width: 80px;
+    color: white;
+    background-color: rgb(0, 0, 0);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    font-size: 0.6rem;
+    transition: scale 0.5s , box-shadow 0.5s;
+}
+button:hover{
+    cursor: pointer;
+    scale: 1.1;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+
+}
+p{
+    font-size: 0.7rem;
+}
+a{
+    
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+}
+a:hover{
+    color: rgb(149, 199, 255);
+    text-decoration: underline solid black 2px;
+}
+
+
+
+
+form div.incorrect label{
+    background-color: rgba(252, 99, 99, 0.7);
+}
+form div.incorrect input{
+    border: 3px solid rgba(252, 99, 99, 0.7);
+    border-left: none;
+}
+
+#errorMsg{
+    color: red;
+    white-space: nowrap;
+}

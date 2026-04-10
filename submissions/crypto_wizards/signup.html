@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo.png">
+</head>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Sign up</h1>
+        <form action="" id="form">
+            <div>
+                <label for="fname"><i class="fa-solid fa-user"></i></label>
+                <input type="text" name="fname" id="fname" placeholder="First Name">
+            </div>
+            <div>
+                <label for="email"><i class="fa-solid fa-at"></i></label>
+                <input type="email" name="email" id="email" placeholder="E-mail">
+            </div>
+            <div>
+                <label for="password"><i class="fa-solid fa-key"></i></label>
+                <input type="password" name="password" id="password" placeholder="Password">
+            </div>
+            <p id="errorMsg"></p>
+            <button type="submit">Sign-Up</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Log in</a></p>
+        <p>Continue without Login? <a href="index.html">Guest mode</a></p>
+    </div>
+    <script src="validation.js" defer></script>
+</body>
+</html>

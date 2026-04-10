@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Trend</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo.png">
+</head>
+<div id="notif-panel">
+    <div class="notif-header">
+        <h3>Notifications</h3>
+    </div>
+    <div class="notif-empty">
+        <p><i class="fa-solid fa-bell"></i>You're all caught up!</p>
+    </div>
+</div>
+<body>
+    <div class="nav-bar">
+        <a href="#" class="nav-bar1">
+            <img src="assets/images/logo+name.png" alt="">
+        </a>
+        <ul class="nav-bar2">
+            <li><a href='#' class="nav-el"><i class="fa-solid fa-house"></i>Home</a></li>
+            <li><a href='#' class="nav-el"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+            <li><a href='javascript:scrollHero2()' class="nav-el"><i class="fa-solid fa-newspaper"></i>News</a></li>
+            <li><a href='#' class="nav-el"><i class="fa-solid fa-users"></i>Community</a></li>
+            <li><a href='#' class="nav-el"><i class="fa-solid fa-bell"></i>Notifications</a></li>
+            <li ><a href='login.html' class="nav-el" target="_self"><i class="fa-solid fa-user"></i><i class="fa-solid fa-user"></i>Login</a></li>
+        </ul>
+        <div id="hamburger"><i class="fa-solid fa-bars"></i></div>
+    </div>
+
+    <gecko-coin-price-marquee-widget 
+        locale="en" 
+        outlined="true" 
+        dark-mode="true"
+        initial-currency="inr">
+    </gecko-coin-price-marquee-widget>
+
+    <div id="main" >
+        <div id="hero">
+            <div class="hero1">
+                <h1 id="message">Welcome to <span>TOKEN TREND</span></h1>
+                <p>Your Ultimate Destination for Cryptocurrency Insights and Trends</p>
+                <a href='javascript:scrollHero2()' class="hero-btn" style="text-decoration: underline solid white 1px;">Explore Now</a>
+            </div>
+        </div>
+        <div class="hero2">
+            <h2><i class="fa-solid fa-chart-line"></i>Live Cryptocurrency Prices</h2>
+            <ul id="hero2-list">
+                <li class="hero2-el" id="hero2-market">
+                    <h4>💹Market Cap <span>?</span></h4>
+                    <p>Fetching...</p>
+                </li>
+                <li class="hero2-el" id="hero2-volume">
+                    <h4>🏪24h Volume <span>?</span></h4>
+                    <p>Fetching...</p>
+                </li>
+                <li class="hero2-el" id="hero2-dominance">
+                    <h4>🔥Dominanace </h4>
+                    <p>Fetching...</p>
+                </li>
+                <li class="hero2-el" id="hero2-active">
+                    <h4>📈Active Cryptos</h4>
+                    <p>Fetching...</p>
+                </li>
+            </ul>
+        </div>
+        <div class="hero3">
+            <h2><i class="fa-solid fa-fire"></i>Top Crypto tokens</h2>
+            <ul id="hero3-list">
+                <li class="hero3-el" id="hero3-trending">
+                    <h4>🔥Trending</h4>
+                    <ul class="hero3-list" id="hero3-list1">
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                    </ul>
+                </li>
+                <li class="hero3-el" id="hero3-gainer">
+                    <h4>📈Top Gainers</h4>
+                    <ul class="hero3-list" id="hero3-list2">
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                    </ul>
+                </li>
+                <li class="hero3-el" id="hero3-loser">
+                    <h4>📉Top Losers </h4>
+                    <ul class="hero3-list" id="hero3-list3">
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                        <li>Fetching...</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="list">
+            <h2><i class="fa-solid fa-list"></i>Coins List</h2>
+            <ul id="list-list">
+                <li id="list-el" class="list-el">
+                    <h4><img src="https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400" alt="">Coin</h4>
+                    <p>Price</p>
+                    <p>24h%</p>
+                    <p>High 24h</p>
+                    <p>Low 24h</p>
+                    <p>Chart</p>
+                    <p>Prediction</p>
+                    <p>Confidence</p>
+                </li>
+                <li class="list-el">
+                    <h4><i class="fa-brands fa-bitcoin"></i>Fetching...</h4>
+                    <p>$0</p>
+                    <p>0%</p>
+                    <p>$0</p>
+                    <p>$0</p>
+                    <p><img src="https://www.coingecko.com/coins/52622/sparkline.svg" alt="chart"></p>
+                    <p>⬆️</p>
+                    <p>0%</p>
+                </li>
+        </div>
+    </div>
+    <div class="feedback">
+        <h1>Have a suggestion for us?</h1>
+        <a href="feedback.html" target="_blank"><button>Fill feedback form <i class="fa-solid fa-heart"></i></button></a>
+    </div>
+    <div id="footer" class="footer"">
+        <div class="footer1">
+            <ul class="company">COMPANY
+                <li>Token Trend™</li>
+                <li>About Us</li>
+                <li>Digital Advertising</li>
+                <li>Careers</li>
+                <li>Investors</li>
+                <li>Contact Us</li>
+            </ul>
+            <ul class="product">PRODUCT & SERVICES
+                <li>For Business </li>
+                <li>For Partners</li>
+                <li>For Advertising</li>
+            </ul>
+            <ul class="app">APPS & DOWNLOADS
+                <li><i class="fa-brands fa-app-store" style="font-size: 1.2rem;"></i>iPhone App</li>
+                <li><i class="fa-brands fa-google-play" style="font-size: 1.2rem;"></i>Android App</li>
+            </ul>
+            <ul class="more">MORE
+                <li>Disclaimer</li>
+                <li>Privacy Policy</li>
+                <li>Ad Policy</li>
+                <li>Cookie Prefrences</li>
+                <li>Help</li>
+                <li>Feedback</li>
+            </ul>
+        </div>
+        <div class="footer2">
+            <a href="https://www.threads.com/@narendramodi1777" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.facebook.com/kodeinkgp" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.instagram.com/kodeinkgp_iitkgp/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://x.com/BajrangPunia" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://github.com/KodeinKGP-TechnologyWeb3Society" target="_blank"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/company/kodeinkgp/" target="_blank"><i class="fa-brands fa-square-linkedin"></i></a>
+        </div>
+        <div class="footer3">
+            Trend Token
+            <i class="fa-regular fa-copyright"></i>
+            2026
+        </div>
+        <div class="footer4" ">
+            Made with <i class="fa-solid fa-heart"></i> by <span style="text-decoration: 1px solid underline var(--red);">Ishani, Pranjal, Kaustubh, Ayush & Ananya</span>
+        </div>
+    </div>
+    <script src="https://widgets.coingecko.com/gecko-coin-price-marquee-widget.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

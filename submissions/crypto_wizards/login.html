@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo.png">
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Log in</h1>
+        <form action="" id="form">
+            <div>
+                <label for="email"><i class="fa-solid fa-at"></i></label>
+                <input type="email" name="email" id="email" placeholder="E-mail">
+            </div>
+            <div>
+                <label for="password"><i class="fa-solid fa-key"></i></label>
+                <input type="password" name="password" id="password" placeholder="Password">
+            </div>
+            <p id="errorMsg"></p>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        <p>Continue without Login? <a href="index.html">Guest mode</a></p>
+    </div>
+    <script src="validation.js" defer></script>
+</body>
+</html>
