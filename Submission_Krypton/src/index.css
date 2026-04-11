@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 150 10% 6%;
+    --foreground: 120 10% 92%;
+    --card: 150 8% 10%;
+    --card-foreground: 120 10% 92%;
+    --popover: 150 8% 10%;
+    --popover-foreground: 120 10% 92%;
+    --primary: 88 62% 55%;
+    --primary-foreground: 150 10% 6%;
+    --secondary: 150 6% 16%;
+    --secondary-foreground: 120 10% 85%;
+    --muted: 150 6% 14%;
+    --muted-foreground: 150 5% 50%;
+    --accent: 88 62% 55%;
+    --accent-foreground: 150 10% 6%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 150 6% 18%;
+    --input: 150 6% 18%;
+    --ring: 88 62% 55%;
+    --radius: 0.75rem;
+
+    --chart-up: 88 62% 55%;
+    --chart-down: 0 72% 55%;
+    --chart-line: 48 96% 53%;
+    --glow: 88 62% 55%;
+
+    --sidebar-background: 150 8% 8%;
+    --sidebar-foreground: 120 10% 92%;
+    --sidebar-primary: 88 62% 55%;
+    --sidebar-primary-foreground: 150 10% 6%;
+    --sidebar-accent: 150 6% 16%;
+    --sidebar-accent-foreground: 120 10% 92%;
+    --sidebar-border: 150 6% 18%;
+    --sidebar-ring: 88 62% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .glow-green {
+    box-shadow: 0 0 20px hsl(var(--glow) / 0.15), 0 0 60px hsl(var(--glow) / 0.05);
+  }
+  .glow-green-sm {
+    box-shadow: 0 0 10px hsl(var(--glow) / 0.1);
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(48 96% 53%));
+  }
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl;
+  }
+}
