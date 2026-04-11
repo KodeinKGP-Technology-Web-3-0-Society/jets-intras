@@ -214,7 +214,7 @@ The final output of `predict_coin()` includes:
 
 ### 3. Interactive Web Dashboard & Inference:
 
-we developed a highly interactive cryptocurrency tracking dashboard by strategically decoupling the machine learning pipeline from the frontend architecture. After building and training softvoting classification on aggregated market datasets—engineering key predictive features such as volatility, moving averages, and momentum—I eliminated the need for a persistent Python backend. Instead, I extracted the model's trained weights and intercept and exported them into a static data.json file. The React-based frontend then ingests this configuration to perform lightweight, client-side inference directly in the browser. This architectural approach allows the dashboard to instantly calculate and deliver AI-driven UP or DOWN daily market forecasts, resulting in a seamless, responsive user experience that is highly scalable and cost-effective to host.
+We developed a highly interactive cryptocurrency tracking dashboard by strategically decoupling the machine learning pipeline from the frontend architecture. After building and training softvoting classification on aggregated market datasets—engineering key predictive features such as volatility, moving averages, and momentum—I eliminated the need for a persistent Python backend. Instead, I extracted the model's trained weights and intercept and exported them into a static data.json file. The React-based frontend then ingests this configuration to perform lightweight, client-side inference directly in the browser. This architectural approach allows the dashboard to instantly calculate and deliver AI-driven UP or DOWN daily market forecasts, resulting in a seamless, responsive user experience that is highly scalable and cost-effective to host.
 
 ##  Setup Instructions
 
@@ -322,5 +322,4 @@ npm start
 Open http://localhost:3000 in your browser to view the application.
 
 ##  Screenshots
-* [Screenshot of the Main Tracking Dashboard and Charts]
-* [Screenshot highlighting the AI UP/DOWN Prediction UI]
+* ![Dashboard Screenshot](SS/ss2.png)
