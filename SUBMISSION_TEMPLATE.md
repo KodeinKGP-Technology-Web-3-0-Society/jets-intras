@@ -2,14 +2,14 @@
 # Team Name: ...
 
 ## Team Members
-* Member 1: [Name] - [GitHub Profile]
-* Member 2: [Name] - [GitHub Profile]
-* Member 3: [Name] - [GitHub Profile]
-* Member 4: [Name] - [GitHub Profile]
+* Member 1: Aditya Tyagi - warrior2323
+* Member 2: Shreyasi Saha - Shreyasidgpkgp29
+* Member 3: Achal Jain - AchalJain-creator
+* Member 4: Sahil Akash - [GitHub Profile]
 
 ## 🔗 Project Links
-* **PPT link:** [add link for ppt explaining your solution]
-* **Hosted Demo:** [Link to live app, e.g., Vercel or Netlify]
+* **PPT link:** https://www.canva.com/design/DAHGSUPv14U/FheS30epu8Tm7QmsI_P0Mw/edit
+* **Hosted Demo:** https://token-trend-forecaster.vercel.app/
 
 ## Technical Implementation
 
