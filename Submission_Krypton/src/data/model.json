@@ -1,0 +1,11 @@
+{
+  "model": "Krypton_Ridge_V1_5Features",
+  "features": {
+    "Close_Open_Spread": 1.215577,
+    "Daily_Return": -2.080355,
+    "Volatility_14d": 0.154229,
+    "Volatility_7d": 0.525708,
+    "High_Low_Spread": 0.230068
+  },
+  "intercept": -0.083747
+}
